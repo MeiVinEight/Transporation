@@ -37,11 +37,7 @@ public class SubscribeDatapack extends ScheduleRunnable
 			}
 			catch (IOException e)
 			{
-				if (this.connection.connecting())
-				{
-					e.printStackTrace();
-					this.connection.disconnect();
-				}
+				this.connection.disconnect();
 				return;
 			}
 
