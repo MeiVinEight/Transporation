@@ -19,6 +19,7 @@ public class DatapackPlayingFile extends Datapack
 	public static final int DIRECTORY = 1;
 	public static final int REQUIRE = 0;
 	public static final int RECEIVE = 1;
+	public static final int UNKNOWN = 2;
 	public static final byte[][] UNIT = {{'B'}, {'K', 'B'}, {'M', 'B'}, {'G', 'B'}, {'T', 'B'}};
 	private static final int BUFF = 1024;
 	public final int stats;
@@ -83,6 +84,10 @@ public class DatapackPlayingFile extends Datapack
 				{
 					e.printStackTrace();
 				}
+			}
+			case DatapackPlayingFile.UNKNOWN ->
+			{
+				System.out.println("File not found: " + this.location);
 			}
 		}
 	}
