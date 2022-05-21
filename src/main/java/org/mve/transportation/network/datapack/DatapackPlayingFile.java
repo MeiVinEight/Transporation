@@ -113,7 +113,9 @@ public class DatapackPlayingFile extends Datapack
 				sizePreSec = (sizePreSec * (time - 1000)) / time;
 			}
 		}
-		long time = System.currentTimeMillis() - time0;
+		long time2 = System.currentTimeMillis();
+		this.progress(length, total, sizePreSec, time2 - time1);
+		long time = time2 - time0;
 		System.out.println("OK Time: " + this.time(time) + " Average: " + this.velocity(length, time));
 
 		out.flush();
