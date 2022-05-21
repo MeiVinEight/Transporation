@@ -50,7 +50,14 @@ public class Main
 					else if ("require".equals(args[0]))
 					{
 						TransportationConnection connection = transportation.connection.connection(args[1]);
-						connection.send(new DatapackPlayingFile(DatapackPlayingFile.REQUIRE, 0, args[2]));
+						if (connection == null)
+						{
+							System.out.println("Can't find connection " + args[1]);
+						}
+						else
+						{
+							connection.send(new DatapackPlayingFile(DatapackPlayingFile.REQUIRE, 0, args[2]));
+						}
 					}
 				}
 			}
