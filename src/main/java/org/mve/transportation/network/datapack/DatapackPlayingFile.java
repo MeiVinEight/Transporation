@@ -108,7 +108,7 @@ public class DatapackPlayingFile extends Datapack
 			if (time2 - time1 >= 1000)
 			{
 				long time = time2 - time1;
-				this.progress(total, sizePreSec, time);
+				this.progress(length, total, sizePreSec, time);
 				time1 += 1000;
 				sizePreSec = (sizePreSec * (time - 1000)) / time;
 			}
@@ -130,16 +130,15 @@ public class DatapackPlayingFile extends Datapack
 		return String.format("%.2f", size) + new String(UNIT[unit]);
 	}
 
-	private void progress(long length, long sizePreSec, long time)
+	private void progress(long length, long remaining, long sizePreSec, long time)
 	{
 		if (sizePreSec > 0)
 		{
-			long need = (length * time) / (sizePreSec * 1000);
+			long need = (remaining * time) / (sizePreSec * 1000);
 
-			double transferred = this.length - length;
-			double total = this.length;
+			double transferred = length - remaining;
 
-			System.out.println(this.time(need) + ' ' + this.velocity(sizePreSec, time) + ' ' + this.format(transferred) + '/' + this.format(total));
+			System.out.println(this.time(need) + ' ' + this.velocity(sizePreSec, time) + ' ' + this.format(transferred) + '/' + this.format(length));
 		}
 	}
 
