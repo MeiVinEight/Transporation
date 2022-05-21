@@ -12,16 +12,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DatapackPlayingFile extends Datapack
 {
-	public static final int FILE = 0;
-	public static final int DIRECTORY = 1;
 	public static final int REQUIRE = 0;
 	public static final int RECEIVE = 1;
 	public static final int UNKNOWN = 2;
 	public static final byte[][] UNIT = {{'B'}, {'K', 'B'}, {'M', 'B'}, {'G', 'B'}, {'T', 'B'}};
 	private static final int BUFF = 1024;
+	private static final URI ROOT;
 	public final int stats;
 	public final long length;
 	public final String location;
@@ -59,36 +60,81 @@ public class DatapackPlayingFile extends Datapack
 		{
 			case DatapackPlayingFile.REQUIRE ->
 			{
-				File file = this.location.indexOf(':') >= 0 ? new File(this.location) : new File(Transportation.transportation.location, this.location);
-				if (file.isFile())
+				try
 				{
-					long length = file.length();
-					try (FileInputStream in = new FileInputStream(file))
+					File file = this.location.indexOf(':') >= 0 ? new File(this.location) : new File(Transportation.transportation.location, this.location);
+					file = file.getAbsoluteFile().getCanonicalFile();
+					if (file.exists())
 					{
-						connection.send(new DatapackPlayingFile(DatapackPlayingFile.RECEIVE, length, file.getName()));
-						this.transport(in, connection.O, length);
+						upload(connection, file.getParentFile(), file);
 					}
-					catch (IOException e)
+					else
 					{
-						e.printStackTrace();
+						connection.send(new DatapackPlayingFile(DatapackPlayingFile.UNKNOWN, 0, file.getCanonicalPath()));
 					}
-				}
-			}
-			case DatapackPlayingFile.RECEIVE ->
-			{
-				try (FileOutputStream out = new FileOutputStream(new File(Transportation.transportation.location, this.location)))
-				{
-					this.transport(connection.I, out, this.length);
 				}
 				catch (IOException e)
 				{
 					e.printStackTrace();
 				}
 			}
+			case DatapackPlayingFile.RECEIVE ->
+			{
+				this.download(connection);
+			}
 			case DatapackPlayingFile.UNKNOWN ->
 			{
 				System.out.println("File not found: " + this.location);
 			}
+		}
+	}
+
+	private void upload(TransportationConnection connection, File root, File file)
+	{
+		if (file.isDirectory())
+		{
+			File[] children = file.listFiles();
+			if (children != null)
+			{
+				for (File child : children)
+				{
+					this.upload(connection, root, child);
+				}
+			}
+		}
+		else
+		{
+			long length = file.length();
+			try (FileInputStream in = new FileInputStream(file))
+			{
+				String trans = this.relativize(root, file);
+				connection.send(new DatapackPlayingFile(DatapackPlayingFile.RECEIVE, length, trans));
+				System.out.println("UL " + trans + " " + this.format(length));
+				this.transport(in, connection.O, length);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private String relativize(File root, File file) throws IOException
+	{
+		return (root == null ? DatapackPlayingFile.ROOT : root.toURI()).relativize(file.toURI()).getPath();
+	}
+
+	private void download(TransportationConnection connection)
+	{
+		File file = new File(Transportation.transportation.location, this.location);
+		try (FileOutputStream out = new FileOutputStream(file))
+		{
+			System.out.println("DL " + this.location + " " + this.format(this.length));
+			this.transport(connection.I, out, this.length);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -164,5 +210,19 @@ public class DatapackPlayingFile extends Datapack
 	{
 		double v = (1000.0 * size) / time;
 		return this.format(v) + "/s";
+	}
+
+	static
+	{
+		URI root = null;
+		try
+		{
+			root = new URI("file:/");
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
+		ROOT = root;
 	}
 }
