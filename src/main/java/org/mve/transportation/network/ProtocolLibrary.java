@@ -16,7 +16,7 @@ public class ProtocolLibrary
 	private static final DatapackConstructor[][] CONSTRUCTOR =
 	{
 		new DatapackConstructor[1],
-		new DatapackConstructor[1]
+		new DatapackConstructor[2]
 	};
 
 	public static Datapack construct(DatapackInputStream stream, int stats, int id)
