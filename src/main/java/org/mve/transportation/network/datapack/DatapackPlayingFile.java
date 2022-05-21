@@ -136,7 +136,7 @@ public class DatapackPlayingFile extends Datapack
 	{
 		if (sizePreSec > 0)
 		{
-			long need = (remaining * time) / (sizePreSec * 1000);
+			long need = (remaining * time) / (sizePreSec);
 
 			double transferred = length - remaining;
 
