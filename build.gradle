@@ -1,0 +1,22 @@
+plugins {
+	id 'java'
+}
+
+group 'org.mve'
+version '1.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://maven.aliyun.com/repository/public' }
+	maven { url 'https://www.jitpack.io' }
+}
+
+dependencies {
+	implementation group: 'com.github.MeiVinEight', name: 'ReflectionFX', version: '68775aca86'
+}
+
+java {
+	withSourcesJar()
+}
+
+jar.dependsOn(tasks.sourcesJar)
