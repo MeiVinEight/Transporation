@@ -1,5 +1,10 @@
 # Project exclude paths
 out/
-TransportManager.iml
 .debug/
 .idea/
+gradlew
+gradlew.bat
+.gradle/
+build/
+gradle/
+release/
