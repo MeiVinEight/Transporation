@@ -28,6 +28,7 @@ public class DatapackPlayingFile extends Datapack
 	public DatapackPlayingFile(DatapackInputStream stream) throws IOException
 	{
 		super(ProtocolLibrary.PLAYING, 0x00);
+		this.asynchronous();
 		this.stats = stream.readByte();
 		this.length = stream.readVarLong();
 		this.location = stream.readString();
@@ -36,6 +37,7 @@ public class DatapackPlayingFile extends Datapack
 	public DatapackPlayingFile(int stats, long length, String location)
 	{
 		super(ProtocolLibrary.PLAYING, 0x00);
+		this.asynchronous();
 		this.stats = stats;
 		this.length = length;
 		this.location = location;
