@@ -209,6 +209,7 @@ public class DatapackPlayingFile extends Datapack
 
 	private String velocity(long size, long time)
 	{
+		time = time > 0 ? time : 1;
 		double v = (1000.0 * size) / time;
 		return this.format(v) + "/s";
 	}
