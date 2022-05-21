@@ -127,6 +127,7 @@ public class DatapackPlayingFile extends Datapack
 	private void download(TransportationConnection connection)
 	{
 		File file = new File(Transportation.transportation.location, this.location);
+		file.getAbsoluteFile().getParentFile().mkdirs();
 		try (FileOutputStream out = new FileOutputStream(file))
 		{
 			System.out.println("DL " + this.location + " " + this.format(this.length));
